@@ -9,37 +9,36 @@ pipeline {
         stage('Diagnostic') {
             steps {
                 sh '''
-                    echo "===== JAVA ====="
                     java -version
- 
-                    echo "===== MAVEN ====="
                     mvn -version
- 
-                    echo "===== WORKSPACE ====="
-                    pwd
                     ls -la
+                    ls -la demo-app
                 '''
             }
         }
  
         stage('Build') {
             steps {
-                echo 'Build en cours...'
-                sh 'mvn clean compile'
+                dir('demo-app') {
+                    echo 'Build Maven en cours...'
+                    sh 'mvn clean compile'
+                }
             }
         }
  
         stage('Test') {
             steps {
-                echo 'Execution des tests unitaires...'
-                sh 'mvn test'
+                dir('demo-app') {
+                    echo 'Execution des tests unitaires...'
+                    sh 'mvn test'
+                }
             }
         }
     }
  
     post {
         success {
-            echo 'Pipeline termine avec succes.'
+            echo 'Build et tests termines avec succes.'
         }
  
         failure {
